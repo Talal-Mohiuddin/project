@@ -2,6 +2,7 @@ import Features from "@/components/Features";
 import Header from "@/components/Header";
 import Hero from "@/components/Hero";
 import Howitworks from "@/components/Howitworks";
+import UserReviews from "@/components/Reviews";
 import Separater from "@/components/Separater";
 
 export default function Home() {
@@ -34,6 +35,7 @@ export default function Home() {
         <Features />
      
         <Howitworks />
+        <UserReviews />
       </div>
     </div>
   );
