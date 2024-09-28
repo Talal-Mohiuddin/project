@@ -10,7 +10,7 @@ export default function Hero() {
           <span className="block">
             Harness the Power of AI with BridgeNLP
           </span>
-          <span className="block mt-2">
+          <span className="block mt-2 text-5xl">
             <span className="text-blue-400">Automate</span>{" "}
             <span className="text-purple-400">Execute</span>{" "}
             <span className="text-pink-400">Optimize</span>
@@ -21,8 +21,8 @@ export default function Hero() {
           processes, and unlock powerful insights to accelerate your development
           workflow.
         </p>
-        <div className="flex flex-col sm:flex-row justify-center gap-4">
-          <Button2 className={"font-semibold text-[1rem] px-10"}>Try it Now</Button2>
+        <div className="">
+          <Button2 className={"font-extrabold text-[1rem] px-12"}>Try it Now</Button2>
         </div>
       </div>
     </div>
