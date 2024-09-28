@@ -8,7 +8,7 @@ export default function Hero() {
       <div className=" z-10 text-center px-6 sm:px-6 lg:px-8 w-full md:max-w-[80%] mt-40">
         <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-6">
           <span className="block">
-            Harness the Power of AI to Run Your Code
+            Harness the Power of AI with BridgeNLP
           </span>
           <span className="block mt-2">
             <span className="text-blue-400">Automate</span>{" "}
