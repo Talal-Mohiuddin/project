@@ -1,6 +1,7 @@
 import Features from "@/components/Features";
 import Header from "@/components/Header";
 import Hero from "@/components/Hero";
+import Howitworks from "@/components/Howitworks";
 import Separater from "@/components/Separater";
 
 export default function Home() {
@@ -31,7 +32,8 @@ export default function Home() {
       </div>
       <div className="bg-[#0B0A0D] px-10 md:px-3">
         <Features />
-        <Separater />
+     
+        <Howitworks />
       </div>
     </div>
   );

@@ -25,6 +25,8 @@ const features = [
   },
 ];
 
+
+
 export default function Features() {
   return (
     <section className=" text-white py-16 relative overflow-hidden">
@@ -45,7 +47,7 @@ export default function Features() {
           {features.map((feature, index) => (
             <Card
               key={index}
-              className="bg-gray-800 border-gray-700 max-w-[300px] hover:border-purple-500 transition-colors duration-300"
+              className="bg-[#15141d] max-w-[350px] outline-none border-none hover:outline hover:border-2 hover:border-purple-500  transition-colors duration-300"
             >
               <CardHeader>
                 <feature.icon className="w-12 h-12 text-purple-500 mb-4" />
