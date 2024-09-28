@@ -1,6 +1,6 @@
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { MessageSquare, Globe, BookOpen, Lock } from "lucide-react";
-import Separater from "./Separater";
+import { motion } from "framer-motion";
 
 const features = [
   {
@@ -25,14 +25,38 @@ const features = [
   },
 ];
 
-
-
 export default function Features() {
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1,
+      },
+    },
+  };
+
+  const itemVariants = {
+    hidden: { opacity: 0, y: 50 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.5,
+        ease: "easeOut",
+      },
+    },
+  };
   return (
     <section className=" text-white py-16 relative overflow-hidden">
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-12">
-          <h2 className="text-blue-400 font-semibold tracking-wide uppercase mb-2 text-xl">
+          <h2
+            variants={containerVariants}
+            initial="hidden"
+            animate="visible"
+            className="text-blue-400 font-semibold tracking-wide uppercase mb-2 text-xl"
+          >
             FEATURES
           </h2>
           <h3 className="text-3xl sm:text-4xl font-bold mb-4">
@@ -50,7 +74,7 @@ export default function Features() {
               className="bg-[#15141d] max-w-[350px] outline-none border-none hover:outline hover:border-2 hover:border-purple-500  transition-colors duration-300"
             >
               <CardHeader>
-                <feature.icon className="w-12 h-12 text-purple-500 mb-4" />
+                <feature.icon className="w-12 h-12 text-blue-500 mb-4" />
                 <h4 className="text-xl font-semibold text-white">
                   {feature.title}
                 </h4>

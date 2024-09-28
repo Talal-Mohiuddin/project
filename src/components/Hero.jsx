@@ -1,10 +1,8 @@
-import { Button } from "@/components/ui/button";
-import Image from "next/image";
 import Button2 from "./Button2";
 
 export default function Hero() {
   return (
-    <div className="  flex items-center justify-center top-0 bottom-0 text-white overflow-hidden">
+    <div className=" flex items-center justify-center top-0 bottom-0 text-white overflow-hidden">
       <div className=" z-10 text-center px-6 sm:px-6 lg:px-8 w-full md:max-w-[80%] mt-40">
         <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold mb-6">
           <span className="block">

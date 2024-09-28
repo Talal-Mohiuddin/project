@@ -1,4 +1,7 @@
+import BackToTopButton from "@/components/Backtotop";
+import DemoComponent from "@/components/Demo";
 import Features from "@/components/Features";
+import Footer from "@/components/Footer";
 import Header from "@/components/Header";
 import Hero from "@/components/Hero";
 import Howitworks from "@/components/Howitworks";
@@ -23,7 +26,7 @@ export default function Home() {
             left: 0,
             zIndex: -1,
           }}
-          className="after:content-[''] after:absolute after:top-0 after:left-0 after:w-full after:h-full after:bg-gradient-to-b after:from-transparent after:to-[#0B0A0D] after:z-0"
+          className="after:content-[''] after:absolute after:top-0 after:left-0 after:w-full after:h-full after:bg-gradient-to-b after:from-transparent after:to-[#1e1c26] after:z-0"
         />
         <div className="relative z-10">
           <Header />
@@ -31,11 +34,13 @@ export default function Home() {
           <Separater />
         </div>
       </div>
-      <div className="bg-[#0B0A0D] px-10 md:px-3">
+      <div className="bg-[#1e1c26] px-10 md:px-3">
         <Features />
-     
         <Howitworks />
         <UserReviews />
+        <DemoComponent />
+        <Footer />
+        <BackToTopButton />
       </div>
     </div>
   );
