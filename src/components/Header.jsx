@@ -20,7 +20,7 @@ export default function Header() {
   const pathname = usePathname();
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 bg-black bg-opacity-50 backdrop-blur-md p-4 text-white">
+    <nav className="fixed top-0 left-0 right-0 z-50 bg-[#0B0A0D] bg-opacity-50 backdrop-blur-md p-4 text-white">
       <div className="w-full md:max-w-[90%] mx-auto flex justify-between items-center">
         <Link href="/" className="text-2xl font-bold">
           BridgeNLP
