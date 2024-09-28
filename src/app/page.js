@@ -34,7 +34,7 @@ export default function Home() {
           <Separater />
         </div>
       </div>
-      <div className="bg-[#1e1c26] px-8 md:px-3">
+      <div className="bg-[#1e1c26] px-5 md:px-3">
         <Features />
         <Howitworks />
         <UserReviews />
