@@ -66,7 +66,7 @@ Result:
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.5 }}
         >
-          <Card className="bg-[#15141D] border-gray-700 shadow-xl rounded-xl overflow-hidden">
+          <Card className="bg-[#15141D] border-none shadow-xl rounded-xl overflow-hidden">
             <CardHeader className="bg-[#15141D] border-b border-gray-700">
               <CardTitle className="text-2xl text-white">
                 Universal Platform Demo
