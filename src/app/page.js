@@ -1,3 +1,5 @@
+'use client'
+
 import BackToTopButton from "@/components/Backtotop";
 import DemoComponent from "@/components/Demo";
 import Features from "@/components/Features";
@@ -7,19 +9,29 @@ import Hero from "@/components/Hero";
 import Howitworks from "@/components/Howitworks";
 import UserReviews from "@/components/Reviews";
 import Separater from "@/components/Separater";
-import { getAuth } from "firebase/auth";
-import { initializeApp } from "firebase/app";
-
-
-
-
-// Initialize Firebase immediately
-
+import { useStore } from "@/store/store";
+import { useEffect } from "react";
 
 export default function App() {
+  const {
+    isAuthenticated,
+    initializeApp,
+    setInitializeApp,
+  } = useStore((state) => state);
+
+  useEffect(() => {
+    if (!initializeApp) {
+      setInitializeApp();
+    }
+  }, [initializeApp, setInitializeApp]);
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      router.push("/chat");
+    }
+  }, [isAuthenticated]);
   return (
     <div className="relative min-h-screen">
-      {/* Background only for Header and Hero sections */}
       <div className="relative min-h-screen">
         <div
           style={{
