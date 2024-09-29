@@ -48,7 +48,10 @@ export default function Features() {
     },
   };
   return (
-    <section className=" text-white py-16 relative overflow-hidden">
+    <section
+      id="features"
+      className=" text-white py-16 relative overflow-hidden"
+    >
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-12">
           <h2

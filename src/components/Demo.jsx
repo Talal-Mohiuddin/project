@@ -51,7 +51,7 @@ Result:
   };
 
   return (
-    <div className="flex items-center justify-center p-4 py-16">
+    <div id="demo" className="flex items-center justify-center p-4 py-16">
       <div className="w-full max-w-3xl">
         <motion.h1
           className="text-4xl font-bold text-center text-white mb-8"
