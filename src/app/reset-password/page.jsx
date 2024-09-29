@@ -7,7 +7,6 @@ import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -105,9 +104,10 @@ export default function ResetPassword() {
             <Button
               type="submit"
               className="w-full bg-gradient-to-r from-[#60A5FA] to-[#C084FC] hover:from-[#3B82F6] hover:to-[#A855F7] text-white transition-all duration-300 transform hover:scale-105"
-              disabled={isLoading}
+              disabled={isLoading || isSuccess}
             >
               {isLoading ? "Processing..." : "Reset Password"}
+              {isSuccess && "Password reset email sent"}
             </Button>
           </form>
           {error && (
