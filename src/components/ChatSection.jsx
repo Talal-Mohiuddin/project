@@ -15,7 +15,7 @@ export default function ChatSection() {
 
   const sendMessage = async (message) => {
     try {
-      const response = await axios.post("http://127.0.0.1:8000/api/chat", {
+      const response = await axios.post("http://127.0.0.1:8000/api/chat/", {
         message,
       });
       return response.data;
