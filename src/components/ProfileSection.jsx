@@ -46,7 +46,7 @@ export default function ProfileSection() {
     if (isAuthenticated) {
       router.push("/chat");
     }
-  }, [isAuthenticated]);
+  }, [isAuthenticated, router]);
 
   const fetchUserData = async () => {
     setIsLoading(true);

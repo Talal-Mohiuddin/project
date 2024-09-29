@@ -10,9 +10,11 @@ import Howitworks from "@/components/Howitworks";
 import UserReviews from "@/components/Reviews";
 import Separater from "@/components/Separater";
 import { useStore } from "@/store/store";
+import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
 export default function App() {
+  const router = useRouter();
   const {
     isAuthenticated,
     initializeApp,
@@ -29,7 +31,7 @@ export default function App() {
     if (isAuthenticated) {
       router.push("/chat");
     }
-  }, [isAuthenticated]);
+  }, [isAuthenticated, router]);
   return (
     <div className="relative min-h-screen">
       <div className="relative min-h-screen">
