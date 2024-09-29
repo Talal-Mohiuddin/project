@@ -12,7 +12,7 @@ import ProfileSection from "@/components/ProfileSection";
 import { LogOut, Menu } from "lucide-react";
 import { useStore } from "@/store/store";
 import { useRouter } from "next/navigation";
-import { signOut } from "firebase/auth";
+import { getAuth, signOut } from "firebase/auth";
 
 const sections = [
   { id: "chat", icon: FaComment, label: "Chat" },
@@ -73,18 +73,19 @@ export default function ChatLayout() {
       ))}
     </div>
   );
-
   const handleLogout = async () => {
+    const auth = getAuth();
     try {
-      setIsLoading(true);
       await signOut(auth);
-      await fetch("http://127.0.0.1:8000/api/logout/", { method: "POST" });
       setIsAuthenticated(false);
-      router.push("/login");
+      router.push("/");
     } catch (error) {
-      console.error("Error during logout:", error);
-    } finally {
-      setIsLoading(false);
+      console.error("Error signing out: ", error);
+      toast.error({
+        title: "Error",
+        description: "Failed to log out. Please try again.",
+        variant: "destructive",
+      });
     }
   };
 
