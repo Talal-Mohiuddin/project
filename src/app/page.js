@@ -7,8 +7,16 @@ import Hero from "@/components/Hero";
 import Howitworks from "@/components/Howitworks";
 import UserReviews from "@/components/Reviews";
 import Separater from "@/components/Separater";
+import { getAuth } from "firebase/auth";
+import { initializeApp } from "firebase/app";
 
-export default function Home() {
+
+
+
+// Initialize Firebase immediately
+
+
+export default function App() {
   return (
     <div className="relative min-h-screen">
       {/* Background only for Header and Hero sections */}
