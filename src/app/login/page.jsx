@@ -232,7 +232,7 @@ export default function Login() {
             Forgot password?
           </a>
           <p className="text-sm text-gray-400">
-            Don't have an account?
+            Don&apos;t have an account?
             <a
               href="/register"
               className="text-[#C084FC] hover:text-[#A855F7] transition-colors duration-300 ml-1"
