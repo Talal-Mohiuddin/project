@@ -52,15 +52,12 @@ export default function ProfileSection() {
     setIsLoading(true);
     try {
       const auth = getAuth();
-      console.log("auth", auth);
       const token = await auth.currentUser.getIdToken();
-      console.log("token", token);
-      const response = await axios.get(
-        "http://127.0.0.1:8000/api/get_user_data/",
-        {
-          headers: { Authorization: token },
-        }
-      );
+      const url = process.env.NEXT_PUBLIC_API_URL || " http://127.0.0.1:8000/";
+      const response = await axios.get(`${url}api/get_user_data/`, {
+        headers: { Authorization: token },
+      });
+      console.log("response", response);
       if (response.data.success) {
         setFirstName(response.data.data.firstName || "");
         setLastName(response.data.data.lastName || "");
@@ -78,22 +75,19 @@ export default function ProfileSection() {
     try {
       const auth = getAuth();
       const token = await auth.currentUser.getIdToken();
-      await axios.post(
-        "/api/save_user_data",
+      console.log("token", token);
+      console.log("token", token);
+      const url = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/";
+      const response = await axios.post(
+        `${url}api/save_user_data/`,
         { firstName, lastName },
         { headers: { Authorization: token } }
       );
-      toast.success({
-        title: "Success",
-        description: "Profile updated successfully",
-      });
+      console.log("response", response);
+      toast.success("Profile updated successfully");
     } catch (error) {
       console.error("Error saving user data:", error);
-      toast.error({
-        title: "Error",
-        description: "Failed to update profile. Please try again.",
-        variant: "destructive",
-      });
+      toast.error(error.message || "Failed to save profile. Please try again.");
     } finally {
       setIsLoading(false);
     }

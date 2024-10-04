@@ -130,7 +130,7 @@ export default function Signup() {
 
       setIsAuthenticated(true);
       toast.success("Registration successful!");
-      router.push("/dashboard");
+      router.push("/chat");
     } catch (error) {
       setError(error.message);
     } finally {
