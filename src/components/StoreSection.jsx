@@ -214,7 +214,7 @@ export default function StoreSection() {
             height="400px"
           />
           <DialogFooter>
-            <Button variant="outline" onClick={handleCloseModal}>
+            <Button variant="outline" className="text-black" onClick={handleCloseModal}>
               Close
             </Button>
             <Button onClick={handleSaveChanges}>Save Changes</Button>
