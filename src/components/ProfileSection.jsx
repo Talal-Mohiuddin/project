@@ -106,7 +106,7 @@ export default function ProfileSection() {
   };
 
   return (
-    <div className="w-full bg-[#111827] ">
+    <div className="w-full bg-[#111827] min-h-[100vh] ">
       <Card className="w-full max-w-md mx-auto bg-[#1E1C26] mt-10 text-white">
         <CardHeader>
           <CardTitle className="text-2xl font-bold text-center">
