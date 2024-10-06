@@ -156,7 +156,7 @@ export default function StoreSection() {
                 onClick={() => handleFunctionClick(func)}
                 className="mt-2 text-black"
               >
-                Open Function
+                Show Function
               </Button>
             </CardContent>
           </Card>
