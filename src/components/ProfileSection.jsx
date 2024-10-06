@@ -101,11 +101,7 @@ export default function ProfileSection() {
       router.push("/");
     } catch (error) {
       console.error("Error signing out: ", error);
-      toast.error({
-        title: "Error",
-        description: "Failed to log out. Please try again.",
-        variant: "destructive",
-      });
+      toast.error("Failed to log out. Please try again.");
     }
   };
 
