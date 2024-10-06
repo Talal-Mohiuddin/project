@@ -174,9 +174,9 @@ export default function StoreSection() {
               <Input
                 id="function-name"
                 value={functionName}
-                onChange={(e) => setFunctionName(e.target.value)}
                 placeholder="Function Name"
-                className="bg-gray-700 text-white"
+                className="bg-gray-700 text-white cursor-default"
+                editable={false}
               />
             </div>
             <div>
@@ -184,9 +184,9 @@ export default function StoreSection() {
               <Textarea
                 id="function-description"
                 value={functionDescription}
-                onChange={(e) => setFunctionDescription(e.target.value)}
+                editable = {false}
                 placeholder="Function Description"
-                className="bg-gray-700 text-white"
+                className="bg-gray-700 text-white cursor-default"
               />
             </div>
             <div>
