@@ -11,37 +11,37 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Plus } from "lucide-react";
 import CodeMirror from "@uiw/react-codemirror";
 import { javascript } from "@codemirror/lang-javascript";
 import { dracula } from "@uiw/codemirror-theme-dracula";
+import { Textarea } from "@/components/ui/textarea";
 
 const initialFunctions = [
   {
     id: 1,
     name: "Function 1",
     code: "// Function 1 code",
-    isPublic: false,
+    description: "Description for Function 1",
   },
   {
     id: 2,
     name: "Function 2",
     code: "// Function 2 code",
-    isPublic: true,
+    description: "Description for Function 2",
   },
   {
     id: 3,
     name: "Function 3",
     code: "// Function 3 code",
-    isPublic: false,
+    description: "Description for Function 3",
   },
   {
     id: 4,
     name: "Function 4",
     code: "// Function 4 code",
-    isPublic: true,
+    description: "Description for Function 4",
   },
 ];
 
@@ -50,41 +50,15 @@ export default function StoreSection() {
   const [showModal, setShowModal] = useState(false);
   const [selectedFunction, setSelectedFunction] = useState(null);
   const [functionName, setFunctionName] = useState("");
-  const [isPublic, setIsPublic] = useState(false);
+  const [functionDescription, setFunctionDescription] = useState("");
   const [editorValue, setEditorValue] = useState("");
-
-  // Commented out API call for fetching user functions
-  // const fetchUserFunctions = async () => {
-  //   try {
-  //     const response = await fetch('/api/user-functions')
-  //     const data = await response.json()
-  //     setFunctions(data)
-  //   } catch (error) {
-  //     console.error('Error fetching user functions:', error)
-  //   }
-  // }
-
-  // Commented out API call for updating function status
-  // const updateFunctionStatus = async (id, isPublic) => {
-  //   try {
-  //     await fetch(`/api/update-function-status/${id}`, {
-  //       method: 'PUT',
-  //       headers: {
-  //         'Content-Type': 'application/json',
-  //       },
-  //       body: JSON.stringify({ isPublic }),
-  //     })
-  //   } catch (error) {
-  //     console.error('Error updating function status:', error)
-  //   }
-  // }
 
   const handleCreateFunction = useCallback(() => {
     setSelectedFunction({
       id: Date.now(),
       name: "New Function",
       code: "// New function code",
-      isPublic: false,
+      description: "",
     });
     setShowModal(true);
   }, []);
@@ -103,38 +77,36 @@ export default function StoreSection() {
     if (selectedFunction) {
       setEditorValue(selectedFunction.code || "");
       setFunctionName(selectedFunction.name || "");
-      setIsPublic(selectedFunction.isPublic || false);
+      setFunctionDescription(selectedFunction.description || "");
     }
   }, [selectedFunction]);
 
-  const handleSaveChanges = () => {
-    const updatedFunction = {
-      ...selectedFunction,
-      name: functionName,
-      code: editorValue,
-      isPublic: isPublic,
-    };
-    setFunctions((prevFunctions) => {
-      const index = prevFunctions.findIndex((f) => f.id === updatedFunction.id);
-      if (index !== -1) {
-        const newFunctions = [...prevFunctions];
-        newFunctions[index] = updatedFunction;
-        return newFunctions;
-      } else {
-        return [...prevFunctions, updatedFunction];
-      }
-    });
+  const handleAddToLibrary = () => {
+    // Commented out API call for adding function to library
+    // const addToLibrary = async () => {
+    //   try {
+    //     const response = await fetch('/api/add-to-library', {
+    //       method: 'POST',
+    //       headers: {
+    //         'Content-Type': 'application/json',
+    //       },
+    //       body: JSON.stringify({
+    //         name: functionName,
+    //         description: functionDescription,
+    //         code: editorValue,
+    //       }),
+    //     });
+    //     if (response.ok) {
+    //       console.log('Function added to library successfully');
+    //     } else {
+    //       console.error('Failed to add function to library');
+    //     }
+    //   } catch (error) {
+    //     console.error('Error adding function to library:', error);
+    //   }
+    // };
+    // addToLibrary();
     handleCloseModal();
-  };
-
-  const handleTogglePublic = (id) => {
-    setFunctions((prevFunctions) =>
-      prevFunctions.map((func) =>
-        func.id === id ? { ...func, isPublic: !func.isPublic } : func
-      )
-    );
-    // Commented out API call for updating function status
-    // updateFunctionStatus(id, !functions.find(f => f.id === id).isPublic)
   };
 
   return (
@@ -159,23 +131,13 @@ export default function StoreSection() {
           >
             <CardContent className="flex flex-col items-center justify-between h-full p-6">
               <span className="text-center mb-2">{func.name}</span>
-              <div className="flex items-center space-x-2">
-                <Switch
-                  id={`public-${func.id}`}
-                  checked={func.isPublic}
-                  onCheckedChange={() => handleTogglePublic(func.id)}
-                />
-                <Label htmlFor={`public-${func.id}`}>
-                  {func.isPublic ? "Public" : "Private"}
-                </Label>
-              </div>
               <Button
                 variant="outline"
                 size="sm"
                 onClick={() => handleFunctionClick(func)}
                 className="mt-2 text-black"
               >
-                Edit
+                Open Function
               </Button>
             </CardContent>
           </Card>
@@ -185,39 +147,50 @@ export default function StoreSection() {
       <Dialog open={showModal} onOpenChange={setShowModal}>
         <DialogContent className="bg-gray-800 text-white">
           <DialogHeader>
-            <DialogTitle>
+            <DialogTitle>Function Details</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <Label htmlFor="function-name">Title</Label>
               <Input
+                id="function-name"
                 value={functionName}
                 onChange={(e) => setFunctionName(e.target.value)}
                 placeholder="Function Name"
-                className="bg-transparent border-none text-xl font-bold"
+                className="bg-gray-700 text-white"
               />
-            </DialogTitle>
-          </DialogHeader>
-          <div className="mb-4">
-            <div className="flex items-center space-x-2">
-              <Switch
-                id="function-public"
-                checked={isPublic}
-                onCheckedChange={setIsPublic}
+            </div>
+            <div>
+              <Label htmlFor="function-description">Description</Label>
+              <Textarea
+                id="function-description"
+                value={functionDescription}
+                onChange={(e) => setFunctionDescription(e.target.value)}
+                placeholder="Function Description"
+                className="bg-gray-700 text-white"
               />
-              <Label htmlFor="function-public">
-                {isPublic ? "Public" : "Private"}
-              </Label>
+            </div>
+            <div>
+              <Label>Function Code</Label>
+              <CodeMirror
+                value={editorValue}
+                theme={dracula}
+                extensions={[javascript({ jsx: true })]}
+                onChange={(value) => setEditorValue(value)}
+                height="200px"
+                editable={false}
+              />
             </div>
           </div>
-          <CodeMirror
-            value={editorValue}
-            theme={dracula}
-            extensions={[javascript({ jsx: true })]}
-            onChange={(value) => setEditorValue(value)}
-            height="400px"
-          />
           <DialogFooter>
-            <Button variant="outline" className="text-black" onClick={handleCloseModal}>
+            <Button
+              variant="outline"
+              className="text-black"
+              onClick={handleCloseModal}
+            >
               Close
             </Button>
-            <Button onClick={handleSaveChanges}>Save Changes</Button>
+            <Button onClick={handleAddToLibrary}>Add to My Library</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
