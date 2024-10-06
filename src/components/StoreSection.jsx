@@ -12,7 +12,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Plus } from "lucide-react";
+import { Plus, Search } from "lucide-react";
 import CodeMirror from "@uiw/react-codemirror";
 import { javascript } from "@codemirror/lang-javascript";
 import { dracula } from "@uiw/codemirror-theme-dracula";
@@ -52,6 +52,7 @@ export default function StoreSection() {
   const [functionName, setFunctionName] = useState("");
   const [functionDescription, setFunctionDescription] = useState("");
   const [editorValue, setEditorValue] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
 
   const handleCreateFunction = useCallback(() => {
     setSelectedFunction({
@@ -109,28 +110,46 @@ export default function StoreSection() {
     handleCloseModal();
   };
 
+  const filteredFunctions = functions.filter(
+    (func) =>
+      func.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      func.description.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   return (
     <div className="bg-[#111827] text-white p-6 rounded-lg min-h-[100vh]">
-      <div className="flex justify-between items-center mb-6">
+      <div className="flex flex-col md:flex-row justify-between items-center mb-6 space-y-4 md:space-y-0">
         <h2 className="text-2xl font-bold">Function Store</h2>
+        <div className="relative w-full md:w-64">
+          <Input
+            type="text"
+            placeholder="Search functions..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="pl-10 pr-4 py-2 w-full bg-gray-700 text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          <Search
+            className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+            size={18}
+          />
+        </div>
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        <Card
-          className="bg-blue-600 border-dashed border-2 border-blue-400 cursor-pointer hover:bg-blue-700 transition-colors"
-          onClick={handleCreateFunction}
-        >
-          <CardContent className="flex flex-col items-center justify-center h-full p-6">
-            <Plus className="w-8 h-8 mb-2" />
-            <span className="text-center">Create New Function</span>
-          </CardContent>
-        </Card>
-        {functions.map((func) => (
+        {filteredFunctions.length === 0 && (
+          <div className="col-span-full text-center text-gray-400">
+            No functions found
+          </div>
+        )}
+        {filteredFunctions.map((func) => (
           <Card
             key={func.id}
             className="bg-gray-800 cursor-pointer text-white hover:bg-gray-700 transition-colors"
           >
             <CardContent className="flex flex-col items-center justify-between h-full p-6">
               <span className="text-center mb-2">{func.name}</span>
+              <p className="text-sm text-gray-400 mb-4 text-center">
+                {func.description}
+              </p>
               <Button
                 variant="outline"
                 size="sm"
@@ -145,7 +164,7 @@ export default function StoreSection() {
       </div>
 
       <Dialog open={showModal} onOpenChange={setShowModal}>
-        <DialogContent className="bg-gray-800 text-white">
+        <DialogContent className="bg-gray-800 text-white max-w-[90%] mx-auto md:max-w-[70%]">
           <DialogHeader>
             <DialogTitle>Function Details</DialogTitle>
           </DialogHeader>
@@ -182,7 +201,7 @@ export default function StoreSection() {
               />
             </div>
           </div>
-          <DialogFooter>
+          <DialogFooter className="flex gap-2">
             <Button
               variant="outline"
               className="text-black"

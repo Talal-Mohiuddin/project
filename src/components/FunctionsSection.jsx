@@ -242,7 +242,7 @@ export default function FunctionsSection() {
       </div>
 
       <Dialog open={showModal} onOpenChange={setShowModal}>
-        <DialogContent className="bg-gray-800 text-white sm:max-w-[425px]">
+        <DialogContent className="bg-gray-800 text-white  max-w-[90%] mx-auto md:max-w-[70%]">
           <DialogHeader>
             <DialogTitle>Function Details</DialogTitle>
           </DialogHeader>
@@ -290,7 +290,7 @@ export default function FunctionsSection() {
               </div>
             </div>
           </ScrollArea>
-          <DialogFooter className="mt-4">
+          <DialogFooter className="mt-4 flex gap-3" >
             <Button
               variant="outline"
               className="text-black"
