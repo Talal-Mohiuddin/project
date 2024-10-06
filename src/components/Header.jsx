@@ -67,7 +67,14 @@ export default function Header() {
             )
           )}
         </div>
-        <Button2 className={"hidden md:block"}>Get Started</Button2>
+        <Button2
+          className={"hidden md:block"}
+          onClick={() => {
+            router.push("/register");
+          }}
+        >
+          Get Started
+        </Button2>
         {/* Mobile Navigation */}
         <Sheet open={isOpen} onOpenChange={setIsOpen}>
           <SheetTrigger asChild>
