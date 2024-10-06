@@ -155,7 +155,7 @@ export default function StoreSection() {
         {functions.map((func) => (
           <Card
             key={func.id}
-            className="bg-gray-800 cursor-pointer hover:bg-gray-700 transition-colors"
+            className="bg-gray-800 cursor-pointer text-white hover:bg-gray-700 transition-colors"
           >
             <CardContent className="flex flex-col items-center justify-between h-full p-6">
               <span className="text-center mb-2">{func.name}</span>
@@ -173,7 +173,7 @@ export default function StoreSection() {
                 variant="outline"
                 size="sm"
                 onClick={() => handleFunctionClick(func)}
-                className="mt-2"
+                className="mt-2 text-black"
               >
                 Edit
               </Button>

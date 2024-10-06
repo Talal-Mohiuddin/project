@@ -127,7 +127,7 @@ export default function FunctionsSection() {
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
         <Card
-          className="bg-blue-600 border-dashed border-2 border-blue-400 cursor-pointer hover:bg-blue-700 transition-colors"
+          className="bg-blue-600 border-dashed border-2 border-blue-400  text-white cursor-pointer hover:bg-blue-700 transition-colors"
           onClick={handleCreateFunction}
         >
           <CardContent className="flex flex-col items-center justify-center h-full p-4 sm:p-6">
@@ -140,7 +140,7 @@ export default function FunctionsSection() {
         {filteredFunctions.map((func) => (
           <Card
             key={func.id}
-            className="bg-gray-800 cursor-pointer hover:bg-gray-700 transition-colors"
+            className="bg-gray-800 cursor-pointer  text-white hover:bg-gray-700 transition-colors"
             onClick={() => handleFunctionClick(func)}
           >
             <CardContent className="flex items-center justify-center h-full p-4 sm:p-6">
