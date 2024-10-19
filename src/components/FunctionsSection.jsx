@@ -18,101 +18,111 @@ import { Switch } from "@/components/ui/switch";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Plus } from "lucide-react";
 import CodeMirror from "@uiw/react-codemirror";
-import { javascript } from "@codemirror/lang-javascript";
+import { python } from "@codemirror/lang-python";
 import { dracula } from "@uiw/codemirror-theme-dracula";
-
-const initialFunctions = [
-  {
-    id: 1,
-    name: "Personal Function 1",
-    description: "Description for Personal Function 1",
-    code: "// Personal function code",
-    isPublic: false,
-  },
-  {
-    id: 2,
-    name: "Public Function 1",
-    description: "Description for Public Function 1",
-    code: "// Public function code",
-    isPublic: true,
-  },
-  {
-    id: 3,
-    name: "Personal Function 2",
-    description: "Description for Personal Function 2",
-    code: "// Personal function code",
-    isPublic: false,
-  },
-  {
-    id: 4,
-    name: "Public Function 2",
-    description: "Description for Public Function 2",
-    code: "// Public function code",
-    isPublic: true,
-  },
-];
+import axios from "axios";
+import { getAuth } from "firebase/auth";
+import { useStore } from "@/store/store";
 
 export default function FunctionsSection() {
   const [activeTab, setActiveTab] = useState("all");
-  const [functions, setFunctions] = useState(initialFunctions);
+  const [functions, setFunctions] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [selectedFunction, setSelectedFunction] = useState(null);
   const [functionName, setFunctionName] = useState("");
   const [functionDescription, setFunctionDescription] = useState("");
   const [isPublic, setIsPublic] = useState(false);
   const [editorValue, setEditorValue] = useState("");
+  const { isAuthenticated } = useStore((state) => state);
+  const [isLoading, setIsLoading] = useState(true);
+  const [defaultFunctionsCreated, setDefaultFunctionsCreated] = useState(false);
 
-  // Commented out API function for fetching functions
-  // const fetchFunctions = async () => {
-  //   try {
-  //     const response = await fetch('/api/functions');
-  //     const data = await response.json();
-  //     setFunctions(data);
-  //   } catch (error) {
-  //     console.error('Error fetching functions:', error);
-  //   }
-  // };
+  const fetchUserFunctions = useCallback(async () => {
+    if (!isAuthenticated) return;
 
-  // Commented out API function for saving a function
-  // const saveFunction = async (functionData) => {
-  //   try {
-  //     const response = await fetch('/api/functions', {
-  //       method: 'POST',
-  //       headers: {
-  //         'Content-Type': 'application/json',
-  //       },
-  //       body: JSON.stringify(functionData),
-  //     });
-  //     const data = await response.json();
-  //     return data;
-  //   } catch (error) {
-  //     console.error('Error saving function:', error);
-  //   }
-  // };
+    setIsLoading(true);
+    try {
+      const auth = getAuth();
+      const token = await auth.currentUser.getIdToken();
+      const url = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/";
+      const response = await axios.get(`${url}api/get_user_functions/`, {
+        headers: { Authorization: token },
+      });
+      setFunctions(response.data.functions);
+    } catch (error) {
+      console.error("Error fetching user functions:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [isAuthenticated]);
 
-  // Commented out API function for updating a function's public status
-  // const updateFunctionPublicStatus = async (id, isPublic) => {
-  //   try {
-  //     const response = await fetch(`/api/functions/${id}/public-status`, {
-  //       method: 'PUT',
-  //       headers: {
-  //         'Content-Type': 'application/json',
-  //       },
-  //       body: JSON.stringify({ isPublic }),
-  //     });
-  //     const data = await response.json();
-  //     return data;
-  //   } catch (error) {
-  //     console.error('Error updating function public status:', error);
-  //   }
-  // };
+  const createDefaultFunctions = async () => {
+    if (!isAuthenticated) return;
+
+    const defaultFunctions = [
+      {
+        name: "Hello World (Public)",
+        description: "A simple public Hello World function",
+        code: "def hello_world():\n    print('Hello, World!')",
+        isPublic: true,
+      },
+      {
+        name: "Hello World (Private)",
+        description: "A simple private Hello World function",
+        code: "def hello_world():\n    print('Hello, World! (Private)')",
+        isPublic: false,
+      },
+    ];
+    try {
+      const auth = getAuth();
+      const token = await auth.currentUser.getIdToken();
+      const url = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/";
+
+      for (const func of defaultFunctions) {
+        await axios.post(
+          `${url}api/save_user_function/`,
+          {
+            name: func.name,
+            description: func.description,
+            code: func.code,
+            language: "python",
+            isPublic: func.isPublic,
+          },
+          {
+            headers: { Authorization: token },
+          }
+        );
+      }
+
+      await fetchUserFunctions();
+    } catch (error) {
+      console.error("Error creating default functions:", error);
+    }
+  };
+
+  useEffect(() => {
+    if (isAuthenticated) {
+      fetchUserFunctions();
+    }
+  }, [isAuthenticated, fetchUserFunctions]);
+
+  useEffect(() => {
+    if (
+      isAuthenticated &&
+      !isLoading &&
+      functions.length === 0 &&
+      !defaultFunctionsCreated
+    ) {
+      createDefaultFunctions().then(() => setDefaultFunctionsCreated(true));
+    }
+  }, [isAuthenticated, isLoading, functions.length, defaultFunctionsCreated]);
 
   const handleCreateFunction = useCallback(() => {
     setSelectedFunction({
       id: Date.now(),
       name: "New Function",
       description: "",
-      code: "// New function code",
+      code: "# New function code",
       isPublic: false,
     });
     setShowModal(true);
@@ -130,7 +140,8 @@ export default function FunctionsSection() {
 
   const filteredFunctions = functions.filter((func) => {
     if (activeTab === "all") return true;
-    return func.isPublic === (activeTab === "public");
+    if (activeTab === "personal") return !func.isPublic;
+    return func.isPublic;
   });
 
   useEffect(() => {
@@ -142,7 +153,9 @@ export default function FunctionsSection() {
     }
   }, [selectedFunction]);
 
-  const handleSaveChanges = () => {
+  const handleSaveChanges = async () => {
+    if (!isAuthenticated) return;
+
     const updatedFunction = {
       ...selectedFunction,
       name: functionName,
@@ -150,30 +163,59 @@ export default function FunctionsSection() {
       code: editorValue,
       isPublic: isPublic,
     };
-    setFunctions((prevFunctions) => {
-      const index = prevFunctions.findIndex((f) => f.id === updatedFunction.id);
-      if (index !== -1) {
-        const newFunctions = [...prevFunctions];
-        newFunctions[index] = updatedFunction;
-        return newFunctions;
-      } else {
-        return [...prevFunctions, updatedFunction];
-      }
-    });
-    // Commented out API call for saving function
-    // saveFunction(updatedFunction);
-    handleCloseModal();
+
+    try {
+      const auth = getAuth();
+      const token = await auth.currentUser.getIdToken();
+      const url = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/";
+      await axios.post(`${url}api/save_user_function/`, updatedFunction, {
+        headers: { Authorization: token },
+      });
+      await fetchUserFunctions();
+      handleCloseModal();
+    } catch (error) {
+      console.error("Error saving function:", error);
+    }
   };
 
-  const handleTogglePublic = (id) => {
-    setFunctions((prevFunctions) =>
-      prevFunctions.map((func) =>
-        func.id === id ? { ...func, isPublic: !func.isPublic } : func
-      )
-    );
-    // Commented out API call for updating function public status
-    // updateFunctionPublicStatus(id, !functions.find(f => f.id === id).isPublic);
+  const handleTogglePublic = async (id) => {
+    if (!isAuthenticated) return;
+
+    try {
+      const auth = getAuth();
+      const token = await auth.currentUser.getIdToken();
+      const url = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/";
+      const response = await axios.post(
+        `${url}api/toggle_function_visibility/`,
+        { functionId: id },
+        {
+          headers: { Authorization: token },
+        }
+      );
+
+      if (response.data.success) {
+        // Update the local state
+        setFunctions(
+          functions.map((func) =>
+            func.id === id
+              ? { ...func, isPublic: response.data.isPublic }
+              : func
+          )
+        );
+      } else {
+        console.error(
+          "Error toggling function visibility:",
+          response.data.error
+        );
+      }
+    } catch (error) {
+      console.error("Error toggling function visibility:", error);
+    }
   };
+
+  if (isLoading) {
+    return <div className="min-h-screen">Loading...</div>;
+  }
 
   return (
     <div className="bg-[#111827] text-white p-5 sm:p-6 rounded-lg min-h-screen">
@@ -242,7 +284,7 @@ export default function FunctionsSection() {
       </div>
 
       <Dialog open={showModal} onOpenChange={setShowModal}>
-        <DialogContent className="bg-gray-800 text-white  max-w-[90%] mx-auto md:max-w-[70%]">
+        <DialogContent className="bg-gray-800 text-white max-w-[90%] mx-auto md:max-w-[70%]">
           <DialogHeader>
             <DialogTitle>Function Details</DialogTitle>
           </DialogHeader>
@@ -282,7 +324,7 @@ export default function FunctionsSection() {
                   <CodeMirror
                     value={editorValue}
                     theme={dracula}
-                    extensions={[javascript({ jsx: true })]}
+                    extensions={[python()]}
                     onChange={(value) => setEditorValue(value)}
                     height="100%"
                   />
@@ -290,7 +332,7 @@ export default function FunctionsSection() {
               </div>
             </div>
           </ScrollArea>
-          <DialogFooter className="mt-4 flex gap-3" >
+          <DialogFooter className="mt-4 flex gap-3">
             <Button
               variant="outline"
               className="text-black"

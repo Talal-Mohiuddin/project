@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useState, useCallback, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -12,57 +10,45 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Plus, Search } from "lucide-react";
+import { Search } from "lucide-react";
 import CodeMirror from "@uiw/react-codemirror";
-import { javascript } from "@codemirror/lang-javascript";
+import { python } from "@codemirror/lang-python";
 import { dracula } from "@uiw/codemirror-theme-dracula";
 import { Textarea } from "@/components/ui/textarea";
-
-const initialFunctions = [
-  {
-    id: 1,
-    name: "Function 1",
-    code: "// Function 1 code",
-    description: "Description for Function 1",
-  },
-  {
-    id: 2,
-    name: "Function 2",
-    code: "// Function 2 code",
-    description: "Description for Function 2",
-  },
-  {
-    id: 3,
-    name: "Function 3",
-    code: "// Function 3 code",
-    description: "Description for Function 3",
-  },
-  {
-    id: 4,
-    name: "Function 4",
-    code: "// Function 4 code",
-    description: "Description for Function 4",
-  },
-];
+import axios from "axios";
+import { getAuth } from "firebase/auth";
+import { useStore } from "@/store/store";
+import { toast } from "sonner";
 
 export default function StoreSection() {
-  const [functions, setFunctions] = useState(initialFunctions);
+  const [functions, setFunctions] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [selectedFunction, setSelectedFunction] = useState(null);
   const [functionName, setFunctionName] = useState("");
   const [functionDescription, setFunctionDescription] = useState("");
   const [editorValue, setEditorValue] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
+  const { isAuthenticated } = useStore((state) => state);
 
-  const handleCreateFunction = useCallback(() => {
-    setSelectedFunction({
-      id: Date.now(),
-      name: "New Function",
-      code: "// New function code",
-      description: "",
-    });
-    setShowModal(true);
-  }, []);
+  const fetchPublicFunctions = useCallback(async () => {
+    if (!isAuthenticated) return;
+
+    try {
+      const auth = getAuth();
+      const token = await auth.currentUser.getIdToken();
+      const url = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/";
+      const response = await axios.get(`${url}api/get_public_functions/`, {
+        headers: { Authorization: token },
+      });
+      setFunctions(response.data.functions);
+    } catch (error) {
+      console.error("Error fetching public functions:", error);
+    }
+  }, [isAuthenticated]);
+
+  useEffect(() => {
+    fetchPublicFunctions();
+  }, [fetchPublicFunctions]);
 
   const handleFunctionClick = useCallback((func) => {
     setSelectedFunction(func);
@@ -82,32 +68,37 @@ export default function StoreSection() {
     }
   }, [selectedFunction]);
 
-  const handleAddToLibrary = () => {
-    // Commented out API call for adding function to library
-    // const addToLibrary = async () => {
-    //   try {
-    //     const response = await fetch('/api/add-to-library', {
-    //       method: 'POST',
-    //       headers: {
-    //         'Content-Type': 'application/json',
-    //       },
-    //       body: JSON.stringify({
-    //         name: functionName,
-    //         description: functionDescription,
-    //         code: editorValue,
-    //       }),
-    //     });
-    //     if (response.ok) {
-    //       console.log('Function added to library successfully');
-    //     } else {
-    //       console.error('Failed to add function to library');
-    //     }
-    //   } catch (error) {
-    //     console.error('Error adding function to library:', error);
-    //   }
-    // };
-    // addToLibrary();
-    handleCloseModal();
+  const handleAddToLibrary = async () => {
+    if (!isAuthenticated || !selectedFunction) return;
+
+    try {
+      const auth = getAuth();
+      const token = await auth.currentUser.getIdToken();
+      const url = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/";
+      const response = await axios.post(
+        `${url}api/add_public_function_to_library/`,
+        { functionId: selectedFunction.id },
+        { headers: { Authorization: token } }
+      );
+
+      if (response.data.success) {
+        toast.success(
+          response.data.message || "Function added to library successfully"
+        );
+        handleCloseModal();
+      } else {
+        toast.error(response.data.error || "Failed to add function to library");
+      }
+    } catch (error) {
+      console.error("Error adding function to library:", error);
+      if (error.response && error.response.data && error.response.data.error) {
+        toast.error(error.response.data.error);
+      } else {
+        toast.error(
+          "An error occurred while adding the function to your library"
+        );
+      }
+    }
   };
 
   const filteredFunctions = functions.filter(
@@ -176,7 +167,7 @@ export default function StoreSection() {
                 value={functionName}
                 placeholder="Function Name"
                 className="bg-gray-700 text-white cursor-default"
-                editable={false}
+                readOnly
               />
             </div>
             <div>
@@ -184,7 +175,7 @@ export default function StoreSection() {
               <Textarea
                 id="function-description"
                 value={functionDescription}
-                editable = {false}
+                readOnly
                 placeholder="Function Description"
                 className="bg-gray-700 text-white cursor-default"
               />
@@ -194,7 +185,7 @@ export default function StoreSection() {
               <CodeMirror
                 value={editorValue}
                 theme={dracula}
-                extensions={[javascript({ jsx: true })]}
+                extensions={[python()]}
                 onChange={(value) => setEditorValue(value)}
                 height="200px"
                 editable={false}
