@@ -23,6 +23,7 @@ import { dracula } from "@uiw/codemirror-theme-dracula";
 import axios from "axios";
 import { getAuth } from "firebase/auth";
 import { useStore } from "@/store/store";
+import { toast } from "sonner";
 
 export default function FunctionsSection() {
   const [activeTab, setActiveTab] = useState("all");
@@ -213,6 +214,28 @@ export default function FunctionsSection() {
     }
   };
 
+  const handleDeleteFunction = async (id) => {
+    try {
+      const auth = getAuth();
+      const token = await auth.currentUser.getIdToken();
+      const url = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/";
+      const response = await axios.post(
+        `${url}api/delete_user_function/`,
+        { functionId: id },
+        {
+          headers: { Authorization: token },
+        }
+      );
+      if (response.data.success) {
+        setFunctions(functions.filter((func) => func.id !== id));
+        handleCloseModal();
+        toast.success("Function deleted successfully");
+      }
+    } catch (error) {
+      console.error("Error deleting function:", error);
+    }
+  };
+
   if (isLoading) {
     return <div className="min-h-screen">Loading...</div>;
   }
@@ -332,15 +355,29 @@ export default function FunctionsSection() {
               </div>
             </div>
           </ScrollArea>
-          <DialogFooter className="mt-4 flex gap-3">
-            <Button
-              variant="outline"
-              className="text-black"
-              onClick={handleCloseModal}
-            >
-              Close
-            </Button>
-            <Button onClick={handleSaveChanges}>Save Changes</Button>
+          <DialogFooter className="mt-4 flex gap-3 justify-between w-full">
+            <div>
+              <Button
+                variant="destructive"
+                onClick={() => {
+                  if (selectedFunction) {
+                    handleDeleteFunction(selectedFunction.id);
+                  }
+                }}
+              >
+                Delete
+              </Button>
+            </div>
+            <div className="flex gap-3">
+              <Button
+                variant="outline"
+                className="text-black"
+                onClick={handleCloseModal}
+              >
+                Close
+              </Button>
+              <Button onClick={handleSaveChanges}>Save Changes</Button>
+            </div>
           </DialogFooter>
         </DialogContent>
       </Dialog>

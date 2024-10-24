@@ -7,6 +7,7 @@ import { ArrowUpIcon } from "lucide-react";
 import { ChatList } from "./ChatList";
 import { ChatScrollAnchor } from "./ChatScrollAnchor";
 import axios from "axios"; // Ensure Axios is imported
+import { getAuth } from "firebase/auth";
 
 export default function ChatSection() {
   const [newMessage, setNewMessage] = useState(""); // Using newMessage for input state
@@ -14,11 +15,21 @@ export default function ChatSection() {
   const [isLoading, setIsLoading] = useState(false);
 
   const sendMessage = async (message) => {
+    const auth = getAuth();
+    const token = await auth.currentUser.getIdToken();
+    const url = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/";
     try {
-      const response = await axios.post("http://127.0.0.1:8000/api/chat/", {
-        message,
-      });
-      return response.data;
+      const response = await axios.post(
+        `${url}api/get_response/`,
+        {
+          message: message,
+        },
+
+        {
+          headers: { Authorization: token },
+        }
+      );
+      return response.data.response;
     } catch (error) {
       console.error("Error sending message:", error);
       throw error;
@@ -36,11 +47,10 @@ export default function ChatSection() {
 
     try {
       const response = await sendMessage(newMessage);
-      const assistantMessage = { sender: "assistant", text: response.message };
+      const assistantMessage = { sender: "assistant", text: response };
       setMessages((prevMessages) => [...prevMessages, assistantMessage]);
     } catch (error) {
       console.error("Error sending message:", error);
-      // Optionally: Add a way to show error to the user here
     } finally {
       setIsLoading(false);
     }
@@ -55,9 +65,7 @@ export default function ChatSection() {
 
   return (
     <main className="flex flex-col h-screen bg-gray-900">
-      <h1>
-        
-      </h1>
+      <h1></h1>
       <div className="flex-grow overflow-auto pb-36 scrollbar-hide">
         <div className="pt-4 md:pt-10">
           <ChatList messages={messages} isLoading={isLoading} />
