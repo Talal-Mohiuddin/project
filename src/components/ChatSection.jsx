@@ -32,7 +32,7 @@ export default function ChatSection() {
       return response.data.response;
     } catch (error) {
       console.error("Error sending message:", error);
-      throw error;
+      return "Sorry, I couldn't process your message. Please try again.";
     }
   };
 

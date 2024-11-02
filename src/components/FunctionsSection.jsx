@@ -37,6 +37,7 @@ export default function FunctionsSection() {
   const { isAuthenticated } = useStore((state) => state);
   const [isLoading, setIsLoading] = useState(true);
   const [defaultFunctionsCreated, setDefaultFunctionsCreated] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const fetchUserFunctions = useCallback(async () => {
     if (!isAuthenticated) return;
@@ -120,7 +121,7 @@ export default function FunctionsSection() {
 
   const handleCreateFunction = useCallback(() => {
     setSelectedFunction({
-      id: Date.now(),
+      id: null,
       name: "New Function",
       description: "",
       code: "# New function code",
@@ -157,8 +158,11 @@ export default function FunctionsSection() {
   const handleSaveChanges = async () => {
     if (!isAuthenticated) return;
 
+    setLoading(true);
+
     const updatedFunction = {
       ...selectedFunction,
+      functionId: selectedFunction.id,
       name: functionName,
       description: functionDescription,
       code: editorValue,
@@ -211,11 +215,14 @@ export default function FunctionsSection() {
       }
     } catch (error) {
       console.error("Error toggling function visibility:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleDeleteFunction = async (id) => {
     try {
+      setLoading(true);
       const auth = getAuth();
       const token = await auth.currentUser.getIdToken();
       const url = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000/";
@@ -233,6 +240,8 @@ export default function FunctionsSection() {
       }
     } catch (error) {
       console.error("Error deleting function:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -316,6 +325,7 @@ export default function FunctionsSection() {
               <div>
                 <Label htmlFor="function-name">Name</Label>
                 <Input
+                  disabled={loading}
                   id="function-name"
                   value={functionName}
                   onChange={(e) => setFunctionName(e.target.value)}
@@ -326,6 +336,7 @@ export default function FunctionsSection() {
               <div>
                 <Label htmlFor="function-description">Description</Label>
                 <Textarea
+                  disabled={loading}
                   id="function-description"
                   value={functionDescription}
                   onChange={(e) => setFunctionDescription(e.target.value)}
@@ -359,24 +370,28 @@ export default function FunctionsSection() {
             <div>
               <Button
                 variant="destructive"
+                disabled={loading}
                 onClick={() => {
                   if (selectedFunction) {
                     handleDeleteFunction(selectedFunction.id);
                   }
                 }}
               >
-                Delete
+                {loading ? "Deleting..." : "Delete"}
               </Button>
             </div>
             <div className="flex gap-3">
               <Button
+                disabled={loading}
                 variant="outline"
                 className="text-black"
                 onClick={handleCloseModal}
               >
                 Close
               </Button>
-              <Button onClick={handleSaveChanges}>Save Changes</Button>
+              <Button disabled={loading} onClick={handleSaveChanges}>
+                {loading ? "Saving..." : "Save Changes"}
+              </Button>
             </div>
           </DialogFooter>
         </DialogContent>
