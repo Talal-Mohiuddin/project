@@ -6,11 +6,11 @@ import { Textarea } from "@/components/ui/textarea";
 import { ArrowUpIcon } from "lucide-react";
 import { ChatList } from "./ChatList";
 import { ChatScrollAnchor } from "./ChatScrollAnchor";
-import axios from "axios"; // Ensure Axios is imported
+import axios from "axios";
 import { getAuth } from "firebase/auth";
 
 export default function ChatSection() {
-  const [newMessage, setNewMessage] = useState(""); // Using newMessage for input state
+  const [newMessage, setNewMessage] = useState("");
   const [messages, setMessages] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -24,7 +24,6 @@ export default function ChatSection() {
         {
           message: message,
         },
-
         {
           headers: { Authorization: token },
         }
@@ -42,7 +41,7 @@ export default function ChatSection() {
 
     const userMessage = { sender: "user", text: newMessage };
     setMessages((prevMessages) => [...prevMessages, userMessage]);
-    setNewMessage(""); // Clear input after sending
+    setNewMessage("");
     setIsLoading(true);
 
     try {
@@ -64,16 +63,20 @@ export default function ChatSection() {
   };
 
   return (
-    <main className="flex flex-col h-screen bg-gray-900">
-      <h1></h1>
-      <div className="flex-grow overflow-auto pb-36 scrollbar-hide">
-        <div className="pt-4 md:pt-10">
-          <ChatList messages={messages} isLoading={isLoading} />
-          <ChatScrollAnchor trackVisibility={true} />
+    <div className="flex flex-col h-screen bg-gray-900 no_scrollbar">
+      {/* Messages Container */}
+      <div className="flex-1 overflow-y-auto no_scrollbar">
+        <div className="container mx-auto max-w-4xl h-full">
+          <div className="pt-4 md:pt-10">
+            <ChatList messages={messages} isLoading={isLoading} />
+            <ChatScrollAnchor trackVisibility={true} />
+          </div>
         </div>
       </div>
-      <div className="relative bottom-5 pt-6">
-        <div className="max-w-3xl mx-auto px-4">
+
+      {/* Input Container */}
+      <div className="border-t border-gray-800 bg-gray-900 py-4 no_scrollbar">
+        <div className="container mx-auto max-w-4xl px-4 no_scrollbar">
           <form onSubmit={handleSubmit} className="relative">
             <Textarea
               onKeyDown={onKeyDown}
@@ -84,8 +87,8 @@ export default function ChatSection() {
               autoComplete="off"
               autoCorrect="off"
               rows={1}
-              value={newMessage} // Use newMessage here
-              onChange={(e) => setNewMessage(e.target.value)} // Update newMessage
+              value={newMessage}
+              onChange={(e) => setNewMessage(e.target.value)}
             />
             <Button
               type="submit"
@@ -99,6 +102,6 @@ export default function ChatSection() {
           </form>
         </div>
       </div>
-    </main>
+    </div>
   );
 }

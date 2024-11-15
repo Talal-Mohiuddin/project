@@ -12,6 +12,15 @@ body {
   }
 }
 
+.no_scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.no_scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;
